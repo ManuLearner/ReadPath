@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -32,7 +33,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import LatestWork.GoToWebPath;
 
 public class BrowserOpen {
-	 static WebDriver driver;
+	 private static final String WebElement = null;
+	static WebDriver driver;
 	 static String ApplicationLocation = getJarPath(); //D:\reportingTool\bin
 
 	public static void main(String[] args) throws InterruptedException, IOException {
@@ -51,7 +53,7 @@ public class BrowserOpen {
 		driver.get(baseUrl);
 		waitforlogin(driver, baseUrl);
 		GoToPath(driver,"//a[text()='Management']");
-		GoToPath(driver,"/html/body/div/div[2]/header/div/nav/ul/li[2]/ul/li[2]/a");
+		GoToPath(driver,"//html[1]/body[1]/div[1]/div[2]/header[1]/div[1]/nav[1]/ul[1]/li[2]/ul[1]/li[2]/a[1]");
 		/*GoToPath(driver,"//a[text()='Travel Policy Administration']");
 		GoToPath(driver,"//*[@id='primaryContent']/ul/li[4]/a");
 		GoToPath(driver,"//*[@id='primaryContent']/ul/li[1]/a");
@@ -100,11 +102,12 @@ public class BrowserOpen {
 			 
 			GoToWebPath.GoToWebPath(PreviousPath, CurrentPath, driver);
 			PreviousPath = CurrentPath;
-		}	
-			//String OutputData = WhichFunctionToUse(type, xPath);
+			
+			
+			String OutputData = WhichFunctionToUse(type, xPath);
 			//System.out.println(OutputData);
 			
-		/*	try {
+			try {
 				System.out.println(OutputData);
 				excel.WriteExcel(OutputData, i);
 				
@@ -120,12 +123,12 @@ public class BrowserOpen {
 			e.printStackTrace();
 		
 			
-		} */
+		} 
 		driver.close();
 	}
 	
 	private static String WhichFunctionToUse(String type, String xPath) throws InterruptedException {
-		String OutputData = null;
+		String OutputData ="";
 		if (WaitFor(driver, xPath)){
 			switch (type)
 			{
@@ -140,11 +143,12 @@ public class BrowserOpen {
 				OutputData =Checkboxfunction(driver,xPath);
 				break;
 				
-			  case "MultiList":
+			 case "MultiList":
 				  OutputData = MultiListFunction(driver,xPath);
 				  break;
-				
-				
+			 case "TextBox":
+				 OutputData = TextBoxFunction(driver,xPath);
+				 break;
 			  case "RadioButton":
 				  OutputData = RadioButtonFunction(driver,xPath);
 				  break;
@@ -170,7 +174,7 @@ public class BrowserOpen {
 	public static String ListFunction(WebDriver driver,String Xpath) throws InterruptedException {
 		String output =null;
 		
-		System.out.println(""+Xpath);
+		//System.out.println(""+Xpath);
 		List<WebElement> dropboxes = driver.findElements(By.xpath(Xpath));
 		for (int i = 0; i < dropboxes.size(); i++) {
 
@@ -190,24 +194,49 @@ public class BrowserOpen {
 	
 	public static String MultiListFunction(WebDriver driver,String Xpath) throws InterruptedException {
 		String output=null;
-		
-		System.out.println(""+Xpath);
-		List<WebElement> Multiboxes = driver.findElements(By.xpath(Xpath));
-		for (int i = 0; i < Multiboxes.size(); i++) {
-			if(Multiboxes.get(i).isSelected()){
+		String check="option checked";
+		//List<WebElement> MultiList = driver.findElements(By.xpath(Xpath));
+		//for (int i = 0; i < MultiList.size(); i++) {
+			WebElement MultiList =  driver.findElement(By.xpath(Xpath));
+			output=(MultiList.getAttribute("class"));
+			if(output.equals(check))
+			{
+				output="checked";
+			}
+			else{
+				output="Not checked";
+			}
+			//if(MultiList.get(i).isSelected()){
 				//if (output == null) {
-					output = (Multiboxes.get(i).getText());
-			}else{
-					output = ("Not checked");
-				}
-				 //output=(dropboxes.get(i).getText());
+					//output = (MultiList.get(i).getText());
+				//}else{
+				//output = (MultiList.get(i).getText())+ "/"+ (MultiList.get(i).getAttribute("class"));
+				//}
+				 
 				
+			//} 
+		//}
+		return output;
+	} 
+	public static String TextBoxFunction(WebDriver driver,String Xpath) throws InterruptedException {
+	String output=null;
+	
+	List<WebElement> Textboxes = driver.findElements(By.xpath(Xpath));
+	for (int i = 0; i < Textboxes.size(); i++)
+	{
+		if (output == null) 
+		{
+			output = (Textboxes.get(i).getText());
+		}
+		else
+		{
+			output =output+"/"+(Textboxes.get(i).getText());
 		}
 		
-		return output;
 	}
+	return output;
 		
-	
+}
 	
 		
 	public static WebDriver BrowserOption(String ApplicationLocation) throws IOException {
@@ -224,29 +253,51 @@ public class BrowserOpen {
 		return driver;
 	}
 	
-	
 	public static String Checkboxfunction(WebDriver driver, String Xpath) throws InterruptedException{
 		String output=null;
-		System.out.println(""+Xpath);
-		
-			List<WebElement> Check = driver.findElements(By.xpath(Xpath));
+		List<WebElement> Check = driver.findElements(By.xpath(Xpath));
 			for (int j = 0; j < Check.size(); j++) {
-				
-				if(Check.get(j).isSelected()){
-					if(output == null){
-						 output=(Check.get(j).getAttribute("name"));
-					}else{
-						output = output + "/" +(Check.get(j).getAttribute("name"));
-					}
-				
-				
+				if(Check.get(j).isSelected())
+				{
+					output=(Check.get(j).getAttribute("checked"));
 				}
-				
+				else{
+					output="Not checked";
+				}
 			}
 		return output;
 		
 		
-	}
+	} 
+	
+	
+	
+	
+	/*public static String Checkboxfunction(WebDriver driver, String Xpath) throws InterruptedException{
+		String output=null;
+		
+		List<WebElement>  elements =  driver.findElements(By.xpath(Xpath));
+
+		for( WebElement element: elements){
+			
+			element.getAttribute("innerHTML");
+			System.out.println(element);
+		}
+		
+		
+		/*if(Check.isDisplayed())
+		{
+			output="Checked";
+			
+		}
+		else {
+			output = "Not checked";
+		}
+				
+		return output;
+		
+		
+	}*/
 	public static String RadioButtonFunction(WebDriver driver, String Xpath) throws InterruptedException{
 		String output = null;
 		List<WebElement> radiobtns = driver.findElements(By.xpath(Xpath));
@@ -307,7 +358,7 @@ public class BrowserOpen {
 	 
 	 public static boolean WaitFor(WebDriver driver, String Xpath)  {
 		 try {
-			WebDriverWait wait = new WebDriverWait(driver, 20);
+			WebDriverWait wait = new WebDriverWait(driver, 30);
 			 wait.until(ExpectedConditions.elementToBeClickable(By.xpath(Xpath))); 
 			 return true;
 		} catch (Exception e) {

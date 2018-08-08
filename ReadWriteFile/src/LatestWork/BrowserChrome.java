@@ -32,7 +32,7 @@ public class BrowserChrome {
 	public static void main(String[] args)throws InterruptedException, IOException {
 		// TODO Auto-generated method stub
 		
-		String ExcelFileLocation = ApplicationLocation +"\\InputXpath.xlsx";
+		String ExcelFileLocation = ApplicationLocation +"\\InputXpathFirefox.xlsx";
 		
 
 		 driver = BrowserOption(ApplicationLocation);
@@ -48,6 +48,8 @@ public class BrowserChrome {
 		//GoToPath(driver,"//*[@id='primaryContent']/ul/li[1]/a");
 		//GoToPath(driver,"//*[@id='primaryContent']/div[3]/div/div/div[1]/ul/li[1]/a"); */
 			
+		
+		
 			
 		 
 		//driver.get("D://Airpolicy.html");
@@ -93,12 +95,12 @@ public class BrowserChrome {
 			String type = excel.getData(i,3);
 			GoToWebPath.GoToWebPath(PreviousPath, CurrentPath, driver);
 			PreviousPath = CurrentPath;
-		}
+		
 			//GoToWebPath(Path);
-			//String OutputData = WhichFunctionToUse(type, xPath);
+			String OutputData = WhichFunctionToUse(type, xPath);
 			//System.out.println(OutputData);
 			
-		/*	try {
+			try {
 				System.out.println(OutputData);
 				excel.WriteExcel(OutputData, i);
 			} catch (Exception e) {
@@ -113,10 +115,10 @@ public class BrowserChrome {
 			e.printStackTrace();
 		
 			
-		} */
+		} 
 	}
 	private static String WhichFunctionToUse(String type, String xPath) throws InterruptedException {
-		String OutputData = null;
+		String OutputData ="";
 		if (WaitFor(driver, xPath)){
 			switch (type)
 			{
@@ -130,6 +132,14 @@ public class BrowserChrome {
 			  case "Checkbox":
 				OutputData =Checkboxfunction(driver,xPath);
 				break;
+				
+			  case "MultiList":
+				  OutputData = MultiListFunction(driver,xPath);
+				  break;
+				  
+			 case "TextBox":
+				 OutputData = TextBoxFunction(driver,xPath);
+				 break;
 				
 				
 			  case "RadioButton":
@@ -168,6 +178,53 @@ public class BrowserChrome {
 		}
 		return output;
 	}
+	
+	public static String MultiListFunction(WebDriver driver,String Xpath) throws InterruptedException {
+		String output=null;
+		String check="option checked";
+		//List<WebElement> MultiList = driver.findElements(By.xpath(Xpath));
+		//for (int i = 0; i < MultiList.size(); i++) {
+			WebElement MultiList =  driver.findElement(By.xpath(Xpath));
+			output=(MultiList.getAttribute("class"));
+			if(output.equals(check))
+			{
+				output="checked";
+			}
+			else{
+				output="Not checked";
+			}
+			//if(MultiList.get(i).isSelected()){
+				//if (output == null) {
+					//output = (MultiList.get(i).getText());
+				//}else{
+				//output = (MultiList.get(i).getText())+ "/"+ (MultiList.get(i).getAttribute("class"));
+				//}
+				 
+				
+			//} 
+		//}
+		return output;
+	} 
+	
+	public static String TextBoxFunction(WebDriver driver,String Xpath) throws InterruptedException {
+		String output=null;
+		
+		List<WebElement> Textboxes = driver.findElements(By.xpath(Xpath));
+		for (int i = 0; i < Textboxes.size(); i++)
+		{
+			if (output == null) 
+			{
+				output = (Textboxes.get(i).getText());
+			}
+			else
+			{
+				output =output+"/"+(Textboxes.get(i).getText());
+			}
+			
+		}
+		return output;
+			
+	}
 	public static WebDriver BrowserOption(String ApplicationLocation) throws IOException {
 
 		HashMap<String, Object> chromePrefs = new HashMap<String, Object>();
@@ -195,10 +252,11 @@ public class BrowserChrome {
 	
 	public static String Checkboxfunction(WebDriver driver, String Xpath) throws InterruptedException{
 		String output=null;
-			List<WebElement> Check = driver.findElements(By.xpath(Xpath));
+		//String str="checked";
+		List<WebElement> Check = driver.findElements(By.xpath(Xpath));
 			for (int j = 0; j < Check.size(); j++) {
-	
-				if(Check.get(j).isSelected()){
+				output=(Check.get(j).getAttribute("checked"));
+				/*if(Check.get(j).isSelected()){
 					if(output == null){
 						 output=(Check.get(j).getAttribute("name"));
 					}else{
@@ -206,9 +264,18 @@ public class BrowserChrome {
 					}
 				
 				
-				}
+				}*/
 				
-			}
+			} 
+		/*WebElement Checkbox =  driver.findElement(By.xpath(Xpath));
+		output=(Checkbox.getAttribute("checked"));
+		if(output.equals(str))
+		{
+			output="checked";
+		}
+		else{
+			output="Not checked";
+		} */
 		return output;
 		
 		
@@ -219,15 +286,17 @@ public class BrowserChrome {
 		List<WebElement> radiobtns = driver.findElements(By.xpath(Xpath));
 		for (int i = 0; i < radiobtns.size(); i++) {
 		//System.out.println (radiobtns.get(i).getText());
-				if(radiobtns.get(i).isSelected()){
+				
 						//System.out.println("----------------------------------");
 					//if(output == null){
-						output=(radiobtns.get(i).getAttribute("value"))+" / "+ (radiobtns.get(i).getAttribute("checked"));
+					
+					output=(radiobtns.get(i).getAttribute("checked"));
+						//output=(radiobtns.get(i).getAttribute("value"))+" / "+ (radiobtns.get(i).getAttribute("checked"));
 					//}else{
 						//output = output + "/" +(radiobtns.get(i).getAttribute("checked"));
 					//}
 					
-				}
+				
 			
 		}
 		return output;

@@ -27,7 +27,7 @@ public class GoToWebPath {
 			
 		for(int x=0 ; x<lenght ; x++){
 			if (FirstPath[x].equals(SecondPath[x])){
-				System.out.println("Same Element [" +x+" ]:"+ FirstPath[x]);
+				//System.out.println("Same Element [" +x+" ]:"+ FirstPath[x]);
 				index++;
 			}	
 		}
@@ -38,7 +38,7 @@ public class GoToWebPath {
 	{
 		for( int i=PathFirst.length;i>index;i--)
 		{
-			driver.findElement(By.xpath("/html/body/div/div[2]/div[2]/main/div/div/div[3]/div[2]/ul/li/a[1]")).click();
+			driver.findElement(By.xpath("//html/body/div/div[2]/div[2]/main/div/div/div[3]/div[2]/ul/li/a[1]")).click();
 			Thread.sleep(100);
 			//(i);
 		}
@@ -48,13 +48,20 @@ public class GoToWebPath {
 		for(int i=index; i<PathSecond.length ; i++)
 		{
 		
-			driver.findElement(By.xpath("//*[text()='" + PathSecond[i] + "']")).click();
-			Thread.sleep(1000);
-			//Do web scraping;
+			driver.findElement(By.xpath("//*[contains(text(),\"" + PathSecond[i] + "\")]")).click();
+			//Thread.sleep(1000);
+			
 			
 		}
 		
+		
 	}
+	/*public static void WebScrap(WebDriver driver)
+	{
+		String currentUrl = driver.getCurrentUrl();
+		//System.out.println("The Current Url is:" + currentUrl);
+		driver.getPageSource();
+	}*/
 
 	private static void WaitFor(WebDriver driver) {
 		// TODO Auto-generated method stub
